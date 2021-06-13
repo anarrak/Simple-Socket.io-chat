@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Socket.io chat</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+</head>
+<body>
+	<header class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom" id="cap">
+    <div href="/" class="d-flex align-items-center text-dark text-decoration-none" id='logoContainer'>
+	  <img src="https://cdn.worldvectorlogo.com/logos/socket-io.svg" id="logo">
+      <span class="fs-4" id="logoText">Socket.io Online Chat</span>
+      <span class="me-3 py-2 text-dark text-decoration-none" id="author">By Andreno</span>
+      <div id="menu">
+      	<a href="/about" class="menuItem" style="color: black;">About</a>
+      </div>
+	</div>
+  </header>
+  <span class="me-3 py-2 text-dark text-decoration-none" id="onlineText">Online: <span id="online">0</span></span>
+  <h3 id="enterNameTitle">Please, enter your name</h1>
+  <div id="enterNameContainer">
+  	<input type="text" id="enterName" placeholder="Enter your name here..." onkeydown="onEnter(Authorization);">
+  	<button id="enterNameConfirm" onclick="Authorization();">OK</button>
+  </div>
+  <div id="messagesContainer">
+  	<ul id="messages">
+  		
+  	</ul>
+  </div>
+  <div id="inputContainer">
+  	<input type="text" id="inputMessage" onkeydown="onEnter(sendMessageToServer);" placeholder="Enter your message...">
+	<button id="sendMessage" onclick="sendMessageToServer();"><img id = "sendMessageIcon" src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Message_%28Send%29.png"></button>
+  </div>
+  
+  
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	var socket = io();
+
+	var textInput = document.getElementById('inputMessage');
+	var sendButton = document.getElementById('sendMessage');
+	var messages = document.getElementById('messages');
+	var online = document.getElementById('online');
+	var nameInput = document.getElementById('enterName');
+	var user = {
+		name: '',
+		color: ''
+	};
+
+
+	function sendMessageToServer() {
+		if (textInput.value) {
+			socket.emit('sendMessage', {msg: textInput.value});
+			textInput.value = '';
+		};
+	};
+	function Authorization () {
+		if (nameInput.value) {
+			socket.emit('register', nameInput.value);
+		};
+	};
+	function onEnter (callback) {
+		if (event.key === "Enter") {
+			callback();
+		};
+	};
+	socket.on('newMessage', usr => {
+		let msg = document.createElement("li");
+		msg.innerHTML = `<li><span style="color: #${usr.color};">${usr.name}</span>: ${usr.msg}</li>`;
+		msg.className = 'message';
+		messages.appendChild(msg);
+	});
+	socket.on('updateOnline', active => {
+		online.innerText = active.count;
+		if (active.count === 0) {
+			online.style.color = 'red';
+		} else if (active.count === 1) {
+			online.style.color = 'yellow';
+		} else {
+			online.style.color = '#66FF00';
+		};
+	});
+	socket.on('newUser', data => {
+		let msg = document.createElement("li");
+		msg.innerHTML = `<li><span style="color: #${data.color};">${data.name}</span> has joined the conversation.</li>`;
+		msg.className = 'userInviteMessage';
+		messages.appendChild(msg);
+	});
+	socket.on('userLeave', usr => {
+		let msg = document.createElement("li");
+		msg.innerHTML = `<li><span style="color: #${usr.color};">${usr.name}</span> has left the conversation.</li>`;
+		msg.className = 'userLeaveMessage';
+		messages.appendChild(msg);
+	});
+	socket.on('succesRegistration', profile => {
+		user = profile;
+		window.onbeforeunload = function () {
+			return 'Are you sure you want to leave the chat?<br>Chat log and your nickname will not be saved.';
+		};
+		document.getElementById('inputContainer').style.display = 'block';
+		document.getElementById('messagesContainer').style.display = 'block';
+		document.getElementById('enterNameTitle').style.display = 'none';
+		document.getElementById('enterNameContainer').style.display = 'none';
+		nameInput.value = '';
+	});
+	socket.on('Error', (err) => {
+		alert(`An error has occurred. Error code: ${err.code}. Error text: ${err.text}.`);
+	});
+</script>
+<style type="text/css">
+	#inputMessage {
+		width: 300px;
+		display: inline-block;
+	}
+	#inputContainer {		
+		margin-left: 300px;
+		width: 340px;
+		margin-bottom: 300px;
+		display: none;
+	}
+	#sendMessageIcon {
+		width: 20px;
+		height: 20px;
+	}
+	#sendMessage {
+		background: rgba(239, 239, 239, 0.000001);
+		border: 0px;
+	}
+	#sendMessage::active {
+		border: 0px;
+	}
+	#messagesContainer {
+		border: 3px solid #e7ebe1;
+		border-radius: 10px;
+		width: 450px;
+		height: 250px;
+		margin-left: 700px;
+		display: none;
+	}
+	#messages {
+		list-style-type: none;
+		padding: 20px;
+		padding-left: 30px;
+		height: 250px;
+		word-break: break-word;
+		overflow-y: scroll;
+	}
+	#cap {
+		height: 50px;
+		padding: 20px;
+	}
+	.userInviteMessage {
+		color: green;
+		background-color: #e7ebe1;
+	}
+	.userLeaveMessage {
+		color: red;
+		background-color: #e7ebe1;
+	}
+	#author {
+		font-size: 11px;
+		margin-left: 10px;
+		width: 60px;
+	}
+	#onlineText {
+		color: red;
+		white-space: nowrap;
+		margin-top: 30px;
+		margin-left: 900px;
+	}
+	#logoText {
+		width: 155px;
+	}
+	#logo {
+		width: 30px;
+		height: 30px;
+		margin-left: 20px;
+	}
+	#menu {
+		margin-left: 400px;
+		border-left: 3px solid #e7ebe1;	
+		padding-left: 30px;	
+	}
+	#menuItem {
+		color: none;
+	}
+	#enterNameTitle {
+		margin-left: 460px;
+	}
+	#enterNameContainer {
+		margin-left: 450px;
+		margin-top: 50px;
+	}
+	#enterName {
+		width: 300px;
+	}
+	#enterNameConfirm {
+		background-color: cyan;
+	}
+	@media only screen and (max-device-width: 1080px) {
+		#logo {
+			margin-left: 0px;
+		}
+		#messagesContainer {
+			margin-left: 50px;
+			width: 300px;
+		}
+		#inputContainer {		
+			margin-left: 60px;
+			margin-top: 10px;
+			width: 300px;
+		}
+		#inputMessage {
+			width: 260px;
+			display: inline-block;
+		}
+		#inputMessage::active {
+			border-width: 5px;
+			border-color: black;
+		}
+		#cap {
+			height: 50px;
+			padding: 10px;
+			padding-left: 0px;
+			margin-bottom: 41px;
+		}
+		#author {
+			width: 60px;
+			margin-left: 5px;
+		}
+		#onlineText {
+			width: 100px;
+			margin-left: 160px;
+		}
+		#menu {
+			margin-left: 10px;
+			border-left: 3px solid #e7ebe1;	
+			padding-left: 15px;	
+		}
+		#menuItem {
+			color: none;
+		}
+		#enterNameTitle {
+			margin-top: 10px;
+			margin-left: 50px;
+		}
+		#enterNameContainer {
+			margin-left: 35px;
+			margin-top: 20px;
+		}
+		#enterName {
+
+		}
+		#enterNameConfirm {
+
+		}
+	}
+</style>
+</html>

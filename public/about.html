@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Socket.io chat</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+</head>
+<body>
+	<header class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom" id="cap">
+    <div href="/" class="d-flex align-items-center text-dark text-decoration-none" id='logoContainer'>
+    <img src="https://cdn.worldvectorlogo.com/logos/socket-io.svg" id="logo">
+      <span class="fs-4" id="logoText">Socket.io Online Chat</span>
+      <span class="me-3 py-2 text-dark text-decoration-none" id="author">By Andreno</span>
+      <div id="menu">
+        <a href="/" class="menuItem" style="color: black;">Return</a>
+      </div>
+  </div>
+  </header>
+  <h1 id="aboutTitle">
+    About Project
+  </h1>
+  <p id="about">
+    Project created by Andreno.Contact with me:<br><a href="https://vk.com/id513098607">Vkontakte</a></p>
+</body>
+<style type="text/css">
+  #cap {
+    height: 50px;
+    padding: 20px;
+  }
+  #author {
+    font-size: 11px;
+    margin-left: 10px;
+    width: 60px;
+  }
+  #onlineText {
+    color: red;
+    white-space: nowrap;
+    margin-top: 30px;
+    margin-left: 900px;
+  }
+  #logoText {
+    width: 155px;
+  }
+  #logo {
+    width: 30px;
+    height: 30px;
+    margin-left: 20px;
+  }
+  #aboutTitle {
+    margin-left: 40%;
+  }
+  #about {
+    text-align: center;
+    font-size: 18px;
+    font-family: monospace;
+    letter-spacing: 0px;
+    font-style: italic;
+  }
+  #menu {
+    margin-left: 400px;
+    border-left: 3px solid #e7ebe1; 
+    padding-left: 30px; 
+  }
+  #menuItem {
+    margin-left: 100px;
+    color: none;
+  }
+  @media only screen and (max-device-width: 1080px) {
+    #logo {
+      margin-left: 0px;
+    }
+    #cap {
+      height: 50px;
+      padding: 10px;
+      padding-left: 0px;
+      margin-bottom: 41px;
+    }
+    #author {
+      width: 60px;
+      margin-left: 5px;
+    }
+    #onlineText {
+      width: 100px;
+      margin-left: 140px;
+    }
+    #menu {
+      margin-left: 10px;
+      border-left: 3px solid #e7ebe1; 
+      padding-left: 15px; 
+    }
+    #menuItem {
+      color: none;
+    }
+    #aboutTitle {
+      margin-left: 80px;
+    }
+  }
+</style>
